@@ -31,6 +31,7 @@ export interface WordData {
   phonetics: Phonetic[];
   meanings: Meaning[];
   etymology?: EtymologyStep[];
+  etymologyText?: string;
   morphology?: {
     root: { text: string; language: string; meaning: string };
     suffix?: { text: string; language: string; meaning: string };
@@ -139,29 +140,34 @@ export default function WordCard({ data }: { data: WordData }) {
         })}
       </section>
 
-      {/* Etymology chain */}
-      {data.etymology && data.etymology.length > 0 && (
+      {/* Etymology */}
+      {(data.etymologyText || (data.etymology && data.etymology.length > 0)) && (
         <>
           <hr className="border-gray-100" />
           <section>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Etymological chain</p>
-            <div className="space-y-2">
-              {data.etymology.map((step, i) => (
-                <div key={i} className="flex gap-3 items-start">
-                  <div className="flex flex-col items-center mt-1.5">
-                    <div className={`w-2.5 h-2.5 rounded-full ${step.isCurrent ? "bg-indigo-500" : "bg-gray-300"}`} />
-                    {i < data.etymology!.length - 1 && <div className="w-px h-5 bg-gray-200 mt-1" />}
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Etymology</p>
+            {data.etymologyText && (
+              <p className="text-sm text-gray-700 leading-relaxed mb-3">{data.etymologyText}</p>
+            )}
+            {data.etymology && data.etymology.length > 0 && (
+              <div className="space-y-2">
+                {data.etymology.map((step, i) => (
+                  <div key={i} className="flex gap-3 items-start">
+                    <div className="flex flex-col items-center mt-1.5">
+                      <div className={`w-2.5 h-2.5 rounded-full ${step.isCurrent ? "bg-indigo-500" : "bg-gray-300"}`} />
+                      {i < data.etymology!.length - 1 && <div className="w-px h-5 bg-gray-200 mt-1" />}
+                    </div>
+                    <div>
+                      <p className={`text-xs font-medium ${step.isCurrent ? "text-indigo-500" : "text-gray-400"}`}>{step.language}</p>
+                      <p className="text-sm text-gray-700">
+                        <em>{step.word}</em>
+                        <span className="text-gray-400"> — "{step.meaning}"</span>
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className={`text-xs font-medium ${step.isCurrent ? "text-indigo-500" : "text-gray-400"}`}>{step.language}</p>
-                    <p className="text-sm text-gray-700">
-                      <em>{step.word}</em>
-                      <span className="text-gray-400"> — "{step.meaning}"</span>
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </section>
         </>
       )}
